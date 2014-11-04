@@ -20,7 +20,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.moomeen.endo2java.error.InvocationException;
 import com.moomeen.endo2java.error.LoginException;
 import com.moomeen.endo2java.map.Mapper;
-import com.moomeen.endo2java.model.SimpleWorkout;
+import com.moomeen.endo2java.model.Workout;
 import com.moomeen.endo2java.schema.EndoWorkout;
 import com.moomeen.endo2java.schema.response.WorkoutsResponse;
 
@@ -88,7 +88,7 @@ public class EndomondoSession {
 			return ret;
 		}
 
-	public List<SimpleWorkout> getWorkouts() throws InvocationException{
+	public List<Workout> getWorkouts() throws InvocationException{
 		checkLoggedIn();
 		WebTarget target = client.target(URL);
 		WebTarget workoutsTarget = target.path(WORKOUTS_PATH)
@@ -97,7 +97,7 @@ public class EndomondoSession {
 
 		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
 
-		List<SimpleWorkout> ret = new ArrayList<SimpleWorkout>();
+		List<Workout> ret = new ArrayList<Workout>();
 		for (EndoWorkout endoWorkout : workouts.data){
 			ret.add(Mapper.toSimpleWorkout(endoWorkout));
 		}
@@ -113,7 +113,7 @@ public class EndomondoSession {
 	private <T> T get(WebTarget target, Class<T> clazz) throws InvocationException{
 //		target = target.queryParam("compression", "gzip");
 		Invocation.Builder invocationBuilder = target.request();
-		invocationBuilder.header(HttpHeaders.ACCEPT_ENCODING, "gzip");
+		invocationBuilder.header(HttpHeaders.ACCEPT_ENCODING, "identity");
 		try {
 			Response r =  invocationBuilder.get();
 			checkHttpStatus(r);

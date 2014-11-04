@@ -3,7 +3,7 @@ package com.moomeen.endo2java.model;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
-public class SimpleWorkout {
+public class Workout {
 	private Long id;
 	private Duration duration;
 	private String distance;
