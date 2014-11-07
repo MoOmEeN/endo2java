@@ -88,12 +88,13 @@ public class EndomondoSession {
 			return ret;
 		}
 
-	public List<Workout> getWorkouts() throws InvocationException{
+	public List<Workout> getWorkouts(int maxResults) throws InvocationException{
 		checkLoggedIn();
 		WebTarget target = client.target(URL);
 		WebTarget workoutsTarget = target.path(WORKOUTS_PATH)
 				.queryParam("authToken", authToken)
-				.queryParam("fields", "simple");
+				.queryParam("fields", "simple")
+				.queryParam("maxResults", maxResults);
 
 		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
 
