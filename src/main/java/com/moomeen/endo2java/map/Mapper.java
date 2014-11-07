@@ -4,8 +4,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 
-import com.moomeen.endo2java.model.Workout;
 import com.moomeen.endo2java.model.Sport;
+import com.moomeen.endo2java.model.Workout;
 import com.moomeen.endo2java.schema.EndoWorkout;
 
 public class Mapper {
@@ -19,7 +19,7 @@ public class Mapper {
 			workout.setDuration(new Duration(endoWorkout.duration));
 		}
 		if (endoWorkout.distance != null){
-			workout.setDistance(endoWorkout.distance.toString());
+			workout.setDistance(endoWorkout.distance);
 		}
 		workout.setBurgersBurned(endoWorkout.burgersBurned);
 		workout.setSport(Sport.fromNumber(endoWorkout.sport));

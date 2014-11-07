@@ -6,7 +6,7 @@ import org.joda.time.Duration;
 public class Workout {
 	private Long id;
 	private Duration duration;
-	private String distance;
+	private Double distance;
 	private Double burgersBurned;
 	private Sport sport;
 	private DateTime startDate;
@@ -21,7 +21,7 @@ public class Workout {
 		this.duration = duration;
 	}
 
-	public void setDistance(String distance) {
+	public void setDistance(Double distance) {
 		this.distance = distance;
 	}
 
@@ -53,7 +53,7 @@ public class Workout {
 		return duration;
 	}
 
-	public String getDistance() {
+	public Double getDistance() {
 		return distance;
 	}
 
