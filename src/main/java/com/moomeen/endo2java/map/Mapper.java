@@ -16,7 +16,7 @@ public class Mapper {
 		Workout workout = new Workout();
 		workout.setId(endoWorkout.id);
 		if (endoWorkout.duration != null) {
-			workout.setDuration(new Duration(endoWorkout.duration));
+			workout.setDuration(new Duration(endoWorkout.duration * 1000));
 		}
 		if (endoWorkout.distance != null){
 			workout.setDistance(endoWorkout.distance);
