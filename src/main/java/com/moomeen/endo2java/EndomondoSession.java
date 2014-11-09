@@ -1,6 +1,5 @@
 package com.moomeen.endo2java;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +18,10 @@ import org.glassfish.jersey.client.ClientConfig;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.moomeen.endo2java.error.InvocationException;
 import com.moomeen.endo2java.error.LoginException;
-import com.moomeen.endo2java.map.Mapper;
+import com.moomeen.endo2java.model.AccountInfo;
+import com.moomeen.endo2java.model.DetailedWorkout;
 import com.moomeen.endo2java.model.Workout;
-import com.moomeen.endo2java.schema.EndoWorkout;
+import com.moomeen.endo2java.schema.response.AccountInfoResponse;
 import com.moomeen.endo2java.schema.response.WorkoutsResponse;
 
 public class EndomondoSession {
@@ -30,6 +30,12 @@ public class EndomondoSession {
 
 	private static final String AUTH_PATH = "auth";
 	private static final String WORKOUTS_PATH = "api/workouts";
+	private static final String SINGLE_WORKOUT_PATH = "api/workout/get";
+	private static final String ACCOUNT_PATH = "api/profile/account/get";
+
+	private static final String WORKOUTS_FIELDS = "simple,device,basic,lcp_count"; // Default fields used by Endomondo 10.1 Appapi/profile/account/get
+	private static final String SINGLE_WORKOUT_FIELDS =
+			"simple,device,basic,motivation,interval,hr_zones,weather,polyline_encoded_small,points,tagged_users,pictures,feed,lcp_count"; // Default fields used by Endomondo 10.1 App
 
 	private String email;
 	private String password;
@@ -88,27 +94,48 @@ public class EndomondoSession {
 			return ret;
 		}
 
-	public List<Workout> getWorkouts(int maxResults) throws InvocationException{
+	public List<Workout> getWorkouts(int maxResults) throws InvocationException {
 		checkLoggedIn();
-		WebTarget target = client.target(URL);
-		WebTarget workoutsTarget = target.path(WORKOUTS_PATH)
+		WebTarget workoutsTarget = target().path(WORKOUTS_PATH)
 				.queryParam("authToken", authToken)
-				.queryParam("fields", "simple")
+				.queryParam("fields", WORKOUTS_FIELDS)
 				.queryParam("maxResults", maxResults);
 
 		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
 
-		List<Workout> ret = new ArrayList<Workout>();
-		for (EndoWorkout endoWorkout : workouts.data){
-			ret.add(Mapper.toSimpleWorkout(endoWorkout));
-		}
-		return ret;
+		return workouts.data;
+	}
+
+	public DetailedWorkout getWorkout(long workoutId) throws InvocationException {
+		checkLoggedIn();
+		WebTarget workoutsTarget = target().path(SINGLE_WORKOUT_PATH)
+				.queryParam("authToken", authToken)
+				.queryParam("workoutId", workoutId)
+				.queryParam("fields", SINGLE_WORKOUT_FIELDS);
+
+		DetailedWorkout workout = get(workoutsTarget, DetailedWorkout.class);
+
+		return workout;
+	}
+
+	public AccountInfo getAccountInfo() throws InvocationException {
+		checkLoggedIn();
+		WebTarget workoutsTarget = target().path(ACCOUNT_PATH)
+				.queryParam("authToken", authToken);
+
+		AccountInfoResponse info = get(workoutsTarget, AccountInfoResponse.class);
+
+		return info.data;
 	}
 
 	private void checkLoggedIn(){
 		if (authToken == null){
 			throw new IllegalStateException("login first!");
 		}
+	}
+
+	private WebTarget target(){
+		return client.target(URL);
 	}
 
 	private <T> T get(WebTarget target, Class<T> clazz) throws InvocationException{

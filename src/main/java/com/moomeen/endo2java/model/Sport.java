@@ -1,5 +1,7 @@
 package com.moomeen.endo2java.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum Sport {
 
 	RUNNING(0, "Running"),
@@ -76,6 +78,7 @@ public enum Sport {
 		return desc;
 	}
 
+	@JsonCreator
 	public static Sport fromNumber(int number){
 		for (Sport item : Sport.values()) {
 			if (item.number == number){
