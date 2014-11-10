@@ -59,8 +59,7 @@ public class EndomondoSession {
 	}
 
 	public void login() throws LoginException {
-		WebTarget target = client.target(URL);
-		WebTarget authTarget = target.path(AUTH_PATH)
+		WebTarget authTarget = target().path(AUTH_PATH)
 				.queryParam("deviceId", UUID.randomUUID()) // TODO what to put here?
 				.queryParam("country", "pl")
 				.queryParam("action", "pair")
@@ -70,7 +69,7 @@ public class EndomondoSession {
 		try {
 			String response = get(authTarget, String.class);
 			checkLoginSuccess(response);
-			Map<String, String> responseMap = parse(response);
+			Map<String, String> responseMap = parseLoginResponse(response);
 
 			authToken = responseMap.get("authToken");
 		} catch (InvocationException e) {
@@ -78,21 +77,21 @@ public class EndomondoSession {
 		}
 	}
 
-		private void checkLoginSuccess(String content) throws LoginException {
-			if (!content.startsWith("OK")){
-				throw new LoginException(content);
-			}
+	private void checkLoginSuccess(String content) throws LoginException {
+		if (!content.startsWith("OK")){
+			throw new LoginException(content);
 		}
+	}
 
-		private Map<String, String> parse(String content) {
-			Map<String, String> ret = new HashMap<String, String>();
-			String[] split = content.split("\n");
-			for (int i = 1; i < split.length; i++){
-				String[] row = split[i].split("=");
-				ret.put(row[0], row[1]);
-			}
-			return ret;
+	private Map<String, String> parseLoginResponse(String content) {
+		Map<String, String> ret = new HashMap<String, String>();
+		String[] split = content.split("\n");
+		for (int i = 1; i < split.length; i++){
+			String[] row = split[i].split("=");
+			ret.put(row[0], row[1]);
 		}
+		return ret;
+	}
 
 	public List<Workout> getWorkouts(int maxResults) throws InvocationException {
 		checkLoggedIn();
@@ -151,9 +150,9 @@ public class EndomondoSession {
 		}
 	}
 
-		private void checkHttpStatus(Response r) throws InvocationException {
-			if (r.getStatus() != Response.Status.OK.getStatusCode()){
-				throw new InvocationException(r.getStatus());
-			}
+	private void checkHttpStatus(Response r) throws InvocationException {
+		if (r.getStatus() != Response.Status.OK.getStatusCode()){
+			throw new InvocationException(r.getStatus());
 		}
+	}
 }
