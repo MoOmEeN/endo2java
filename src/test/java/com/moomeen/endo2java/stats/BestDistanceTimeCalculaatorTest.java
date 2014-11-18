@@ -15,7 +15,7 @@ import com.moomeen.endo2java.model.Point;
 import com.moomeen.endo2java.model.PointInstruction;
 import com.moomeen.endo2java.model.stats.DistanceTime;
 
-public class StatsCalculatorTest {
+public class BestDistanceTimeCalculaatorTest {
 
 	@Test
 	public void distanceBestTest_onePossibleBest(){
@@ -23,7 +23,7 @@ public class StatsCalculatorTest {
 		int TIME_IN_SECONDS = 60;
 
 		// given
-		Point START_POINT = getPoint(
+		Point START_POINT = getStartPoint(
 				parse("2010-01-01T00:00:00"),
 				0);
 		Point FIRST_KM = getPoint(
@@ -34,7 +34,7 @@ public class StatsCalculatorTest {
 				FIRST_KM);
 
 		// when
-		DistanceTime best = new StatsCalculator(workout).getDistanceBest(DISTANCE);
+		DistanceTime best = new BestDistanceTimeCalculator(workout).calculate(DISTANCE);
 
 		// then
 		assertEquals(DISTANCE, best.getDistance(), 0);
@@ -49,7 +49,7 @@ public class StatsCalculatorTest {
 		int TIME_IN_SECONDS = 60;
 
 		// given
-		Point START_POINT = getPoint(
+		Point START_POINT = getStartPoint(
 				parse("2010-01-01T00:00:00"),
 				0);
 		Point ALMOST_FIRST_KM = getPoint(
@@ -64,7 +64,7 @@ public class StatsCalculatorTest {
 				MORE_THAN_FIRST_KM);
 
 		// when
-		DistanceTime best = new StatsCalculator(workout).getDistanceBest(DISTANCE_IN_KM);
+		DistanceTime best = new BestDistanceTimeCalculator(workout).calculate(DISTANCE_IN_KM);
 
 		// then
 		assertEquals(DISTANCE_IN_KM, best.getDistance(), 0);
@@ -79,7 +79,7 @@ public class StatsCalculatorTest {
 		int TIME_IN_SECONDS = 60;
 
 		// given
-		Point START_POINT = getPoint(
+		Point START_POINT = getStartPoint(
 				parse("2010-01-01T00:00:00"),
 				0);
 		Point FIRST_KM = getPoint(
@@ -102,7 +102,7 @@ public class StatsCalculatorTest {
 				THIRD_KM);
 
 		// when
-		DistanceTime best = new StatsCalculator(workout).getDistanceBest(DISTANCE_IN_KM);
+		DistanceTime best = new BestDistanceTimeCalculator(workout).calculate(DISTANCE_IN_KM);
 
 		// then
 		assertEquals(DISTANCE_IN_KM, best.getDistance(), 0);
@@ -117,7 +117,7 @@ public class StatsCalculatorTest {
 		int TIME_IN_SECONDS = 60;
 
 		// given
-		Point START_POINT = getPoint(
+		Point START_POINT = getStartPoint(
 				parse("2010-01-01T00:00:00"),
 				0);
 		Point FIRST_KM = getPoint(
@@ -144,7 +144,7 @@ public class StatsCalculatorTest {
 				MORE_THAN_THIRD_KM);
 
 		// when
-		DistanceTime best = new StatsCalculator(workout).getDistanceBest(DISTANCE_IN_KM);
+		DistanceTime best = new BestDistanceTimeCalculator(workout).calculate(DISTANCE_IN_KM);
 
 		// then
 		assertEquals(DISTANCE_IN_KM, best.getDistance(), 0);
@@ -159,7 +159,7 @@ public class StatsCalculatorTest {
 		int TIME_IN_SECONDS = 60;
 
 		// given
-		Point START_POINT = getPoint(
+		Point START_POINT = getStartPoint(
 				parse("2010-01-01T00:00:00"),
 				0);
 		Point FIRST_KM = getPoint(
@@ -186,7 +186,7 @@ public class StatsCalculatorTest {
 				THIRD_KM);
 
 		// when
-		DistanceTime best = new StatsCalculator(workout).getDistanceBest(DISTANCE_IN_KM);
+		DistanceTime best = new BestDistanceTimeCalculator(workout).calculate(DISTANCE_IN_KM);
 
 		// then
 		assertEquals(DISTANCE_IN_KM, best.getDistance(), 0);
@@ -234,6 +234,12 @@ public class StatsCalculatorTest {
 	private Point getResumePoint(DateTime time, double distance){
 		Point point = getPoint(time, distance);
 		when(point.getInstruction()).thenReturn(PointInstruction.RESUME);
+		return point;
+	}
+	
+	private Point getStartPoint(DateTime time, double distance){
+		Point point = getPoint(time, distance);
+		when(point.getInstruction()).thenReturn(PointInstruction.START);
 		return point;
 	}
 }
