@@ -21,6 +21,8 @@ public class Point {
 	private Double longitude;
 	@JsonProperty("lat")
 	private Double latitude;
+	@JsonProperty("inst")
+	private PointInstruction instruction;
 
 	@JsonProperty("time")
 	public void setStartTime(String startTime){
@@ -44,5 +46,8 @@ public class Point {
 	}
 	public Double getLatitude() {
 		return latitude;
+	}
+	public PointInstruction getInstruction() {
+		return instruction;
 	}
 }
