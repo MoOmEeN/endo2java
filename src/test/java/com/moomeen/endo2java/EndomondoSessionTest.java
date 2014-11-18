@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.moomeen.endo2java.EndomondoSession;
 import com.moomeen.endo2java.error.InvocationException;
 import com.moomeen.endo2java.error.LoginException;
 import com.moomeen.endo2java.model.Workout;
@@ -49,7 +48,7 @@ public class EndomondoSessionTest {
 		session.login();
 		List<Workout> workouts = session.getWorkouts(MAX_RESULTS);
 
-		// then exception
+		// then
 		assertEquals(MAX_RESULTS, workouts.size());
 	}
 
