@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Workout {
 
-
 	private Long id;
 	private Duration duration;
 	private Double distance;
