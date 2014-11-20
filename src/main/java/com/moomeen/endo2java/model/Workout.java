@@ -39,6 +39,9 @@ public class Workout {
 	private Integer peptalks;
 	private Integer likes;
 	private Integer comments;
+	
+	@JsonProperty("polyline_encoded_small")
+	private String polyLineEncoded;
 
 	@JsonProperty("lcp_count")
     public void setLcpCount(Map<String, Object> lcpCount) {
@@ -127,5 +130,9 @@ public class Workout {
 
 	public Integer getComments() {
 		return comments;
+	}
+
+	public String getPolyLineEncoded() {
+		return polyLineEncoded;
 	}
 }
