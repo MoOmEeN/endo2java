@@ -10,7 +10,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -140,7 +139,7 @@ public class EndomondoSession {
 	private <T> T get(WebTarget target, Class<T> clazz) throws InvocationException{
 //		target = target.queryParam("compression", "gzip");
 		Invocation.Builder invocationBuilder = target.request();
-		invocationBuilder.header(HttpHeaders.ACCEPT_ENCODING, "identity");
+//		invocationBuilder.header(HttpHeaders.ACCEPT_ENCODING, "gzip");
 		try {
 			Response r =  invocationBuilder.get();
 			checkHttpStatus(r);

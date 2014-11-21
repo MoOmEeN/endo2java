@@ -102,7 +102,7 @@ public class EndomondoSessionTest {
 		session.login();
 		AccountInfo info = session.getAccountInfo();
 
-		// then exception
+		// then
 		assertNotNull(info);
 	}
 
@@ -112,10 +112,9 @@ public class EndomondoSessionTest {
 		EndomondoSession session = new EndomondoSession(EMAIL, PASSWORD);
 
 		// when
-		AccountInfo info = session.getAccountInfo();
+		session.getAccountInfo();
 
 		// then exception
-		assertNotNull(info);
 	}
 
 }
