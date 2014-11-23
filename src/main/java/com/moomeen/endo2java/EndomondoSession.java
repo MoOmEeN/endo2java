@@ -13,6 +13,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.moomeen.endo2java.error.InvocationException;
@@ -42,6 +43,7 @@ public class EndomondoSession {
 	private String authToken;
 
 	private Client client;
+	private MultiThreadedEndoExecutor multiThreadedExecutor = new MultiThreadedEndoExecutor(this);
 
 	public EndomondoSession(String email, String password) {
 		init();
@@ -104,6 +106,31 @@ public class EndomondoSession {
 		return workouts.data;
 	}
 
+	public List<Workout> getWorkouts(String fields, int maxResults) throws InvocationException {
+		checkLoggedIn();
+		WebTarget workoutsTarget = target().path(WORKOUTS_PATH)
+				.queryParam("authToken", authToken)
+				.queryParam("fields", fields)
+				.queryParam("maxResults", maxResults);
+
+		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
+
+		return workouts.data;
+	}
+
+	public List<Workout> getWorkouts(int maxResults, DateTime before) throws InvocationException {
+		checkLoggedIn();
+		WebTarget workoutsTarget = target().path(WORKOUTS_PATH)
+				.queryParam("authToken", authToken)
+				.queryParam("fields", WORKOUTS_FIELDS)
+				.queryParam("maxResults", maxResults)
+				.queryParam("before", before.toString("yyyy-MM-dd HH:mm:ss Z"));
+
+		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
+
+		return workouts.data;
+	}
+
 	public DetailedWorkout getWorkout(long workoutId) throws InvocationException {
 		checkLoggedIn();
 		WebTarget workoutsTarget = target().path(SINGLE_WORKOUT_PATH)
@@ -125,6 +152,12 @@ public class EndomondoSession {
 
 		return info.data;
 	}
+
+	public List<Workout> getAllWorkouts()  throws InvocationException {
+		checkLoggedIn();
+		return multiThreadedExecutor.getAllWorkouts();
+	}
+
 
 	private void checkLoggedIn(){
 		if (authToken == null){
