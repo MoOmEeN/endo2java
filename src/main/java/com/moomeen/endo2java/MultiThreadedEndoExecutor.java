@@ -19,8 +19,6 @@ public class MultiThreadedEndoExecutor {
 
 	private final static Logger LOG = LoggerFactory.getLogger(MultiThreadedEndoExecutor.class);
 
-	private static final int WORKOUTS_PER_THREAD = 10;
-
 	private ExecutorService executorService = Executors.newFixedThreadPool(20);
 	private EndomondoSession session;
 
@@ -28,15 +26,15 @@ public class MultiThreadedEndoExecutor {
 		this.session = session;
 	}
 
-	public List<Workout> getAllWorkouts() throws InvocationException {
-		List<Workout> simpleWorkouts = session.getWorkouts("simple", 999); // TODO
+	public List<Workout> getAllWorkouts(int workoutsPerThread) throws InvocationException {
+		List<Workout> workoutsHeaders = getWorkoutsHeaders();
 		List<Future<List<Workout>>> futures = new ArrayList<Future<List<Workout>>>();
 
 		futures.add(submitTask(1));
 
-		for (int i = 1; i < simpleWorkouts.size(); i = i + WORKOUTS_PER_THREAD){
-			final DateTime before = simpleWorkouts.get(i - 1).getStartTime();
-			futures.add(submitTask(WORKOUTS_PER_THREAD, before));
+		for (int i = 1; i < workoutsHeaders.size(); i = i + workoutsPerThread){
+			final DateTime before = workoutsHeaders.get(i - 1).getStartTime();
+			futures.add(submitTask(workoutsPerThread, before));
 		}
 		return extractData(futures);
 	}
@@ -51,6 +49,10 @@ public class MultiThreadedEndoExecutor {
 			}
 		}
 		return ret;
+	}
+	
+	private List<Workout> getWorkoutsHeaders() throws InvocationException{
+		return session.getWorkouts("simple", 999); // TODO
 	}
 
 	private Future<List<Workout>> submitTask(final int max){

@@ -155,7 +155,8 @@ public class EndomondoSession {
 
 	public List<Workout> getAllWorkouts()  throws InvocationException {
 		checkLoggedIn();
-		return multiThreadedExecutor.getAllWorkouts();
+		int workoutsPerTherad = 10;
+		return multiThreadedExecutor.getAllWorkouts(workoutsPerTherad);
 	}
 
 
