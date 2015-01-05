@@ -3,6 +3,7 @@ package com.moomeen.endo2java.model;
 import static com.moomeen.endo2java.model.Constants.*;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,8 +37,7 @@ public class AccountInfo {
 	@JsonProperty("height_cm")
 	private Integer height;
 	private DateTime createdTime;
-	@JsonProperty("time_zone")
-	private String timeZone;
+	private DateTimeZone timeZone;
 
 	@JsonProperty("sync_time")
 	public void setSyncTime(String s){
@@ -57,6 +57,11 @@ public class AccountInfo {
 	@JsonProperty("created_time")
 	public void setCreatedTime(String s){
 		this.createdTime = DateTime.parse(s, DateTimeFormat.forPattern(DATE_FORMAT));
+	}
+	
+	@JsonProperty("time_zone")
+	public void setTimeZone(String s){
+		this.timeZone = DateTimeZone.forID(s);
 	}
 
 	public Integer getWeight() {
@@ -127,7 +132,7 @@ public class AccountInfo {
 		return createdTime;
 	}
 
-	public String getTimeZone() {
+	public DateTimeZone getTimeZone() {
 		return timeZone;
 	}
 }
