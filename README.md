@@ -4,8 +4,9 @@ Endo2Java
 =========================
 
 This is a Java implementation of unofficial mobile API of Endomondo.
+Allows to retrieve workouts (with gps coordinates if available) and account information.
 
-## Usage ##
+#### Login ####
 ```java
 EndomondoSession session = new EndomondoSession(userName, password);
 try {
@@ -15,3 +16,9 @@ try {
 }
 ```
 
+#### Retrieve data ####
+```java
+session.getAllWorkouts() // basic data, without gps information
+session.getWorkout(id) // single workout, all available data (with gps)
+session.getAccountInfo()
+```
