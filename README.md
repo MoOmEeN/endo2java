@@ -4,7 +4,6 @@ Endo2Java
 =========================
 
 This is a Java implementation of unofficial mobile API of Endomondo.
-Allows to retrieve workouts (with gps coordinates if available) and account information.
 
 #### Login ####
 ```java
