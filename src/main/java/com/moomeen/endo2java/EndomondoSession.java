@@ -33,7 +33,7 @@ public class EndomondoSession {
 	private static final String SINGLE_WORKOUT_PATH = "api/workout/get";
 	private static final String ACCOUNT_PATH = "api/profile/account/get";
 
-	private static final String WORKOUTS_FIELDS = "simple,device,basic,lcp_count,polyline_encoded_small"; // Default fields used by Endomondo 10.1 Appapi/profile/account/get + polyline_encoded_small
+	private static final String WORKOUTS_FIELDS = "simple,device,basic,lcp_count,polyline_encoded_small"; // Default fields used by Endomondo 10.1 App + polyline_encoded_small
 	private static final String SINGLE_WORKOUT_FIELDS =
 			"simple,device,basic,motivation,interval,hr_zones,weather,polyline_encoded_small,points,tagged_users,pictures,feed,lcp_count"; // Default fields used by Endomondo 10.1 App
 
@@ -153,6 +153,12 @@ public class EndomondoSession {
 		return info.data;
 	}
 
+	/**
+	 * Retrieves all workouts. Using multiple threads.
+	 * 
+	 * @return
+	 * @throws InvocationException
+	 */
 	public List<Workout> getAllWorkouts()  throws InvocationException {
 		checkLoggedIn();
 		int workoutsPerTherad = 10;
