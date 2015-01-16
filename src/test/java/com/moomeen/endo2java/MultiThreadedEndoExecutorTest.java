@@ -52,7 +52,7 @@ public class MultiThreadedEndoExecutorTest {
 		mockHeadersRetrieval(workouts);
 		
 		// when
-		executor.getAllWorkouts(WORKOUTS_PER_THREAD);
+		executor.getWorkouts(WORKOUTS_PER_THREAD);
 		
 		// then
 		assertHeadersRetrieved();
@@ -62,11 +62,11 @@ public class MultiThreadedEndoExecutorTest {
 	}
 
 	private void mockHeadersRetrieval(List<Workout> workouts) throws InvocationException {
-		when(session.getWorkouts("simple", 999)).thenReturn(workouts);
+		when(session.getWorkouts("simple")).thenReturn(workouts);
 	}
 	
 	private void assertHeadersRetrieved() throws InvocationException{
-		verify(session, times(1)).getWorkouts("simple", 999); 
+		verify(session, times(1)).getWorkouts("simple"); 
 	}
 	
 	private void assertWorkoutsRetrieved(int maxResults) throws InvocationException{

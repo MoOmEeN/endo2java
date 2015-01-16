@@ -1,5 +1,6 @@
 package com.moomeen.endo2java;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.moomeen.endo2java.error.InvocationException;
@@ -26,6 +29,8 @@ import com.moomeen.endo2java.schema.response.WorkoutsResponse;
 
 public class EndomondoSession {
 
+	private final static Logger LOG = LoggerFactory.getLogger(EndomondoSession.class);
+	
 	private static final String URL = "https://api.mobile.endomondo.com/mobile";
 
 	private static final String AUTH_PATH = "auth";
@@ -105,32 +110,60 @@ public class EndomondoSession {
 
 		return workouts.data;
 	}
+	
+	public List<Workout> getWorkouts() throws InvocationException {
+		return getWorkouts(WORKOUTS_FIELDS);
+	}
 
-	public List<Workout> getWorkouts(String fields, int maxResults) throws InvocationException {
+	public List<Workout> getWorkouts(String fields) throws InvocationException {
 		checkLoggedIn();
-		WebTarget workoutsTarget = target().path(WORKOUTS_PATH)
-				.queryParam("authToken", authToken)
-				.queryParam("fields", fields)
-				.queryParam("maxResults", maxResults);
+		List<Workout> ret = new ArrayList<Workout>();
+		int maxPerRequest = 999;
+		DateTime before = DateTime.now();
+		boolean hasMore;
+		do {
+			WorkoutsResponse workouts = queryWorkouts(fields, maxPerRequest, before);
+			ret.addAll(workouts.data);
+			hasMore = hasMoreWorkouts(workouts);
+			if (hasMore){
+				before = getDateOfTheOldest(workouts.data);
+			}
+		} while (hasMore);
+		
+		return ret;
+	}
 
-		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
-
-		return workouts.data;
+	private boolean hasMoreWorkouts(WorkoutsResponse response) {
+		return response.more == null ? true : response.more;
+	}
+	
+	/**
+	 * assumes workouts are sorted descending by start date (that is how api returns them) 
+	 */
+	private DateTime getDateOfTheOldest(List<Workout> workouts){
+		return workouts.get(workouts.size()-1).getStartTime();
 	}
 
 	public List<Workout> getWorkouts(int maxResults, DateTime before) throws InvocationException {
+		return getWorkouts(WORKOUTS_FIELDS, maxResults, before);
+	}
+
+	public List<Workout> getWorkouts(String fields, int maxResults, DateTime before) throws InvocationException {
 		checkLoggedIn();
-		WebTarget workoutsTarget = target().path(WORKOUTS_PATH)
-				.queryParam("authToken", authToken)
-				.queryParam("fields", WORKOUTS_FIELDS)
-				.queryParam("maxResults", maxResults)
-				.queryParam("before", before.toString("yyyy-MM-dd HH:mm:ss Z"));
-
-		WorkoutsResponse workouts = get(workoutsTarget, WorkoutsResponse.class);
-
+		WorkoutsResponse workouts = queryWorkouts(fields, maxResults, before);
 		return workouts.data;
 	}
 
+	private WorkoutsResponse queryWorkouts(String fields, int maxResults, DateTime before) throws InvocationException {
+		WebTarget workoutsTarget = target().path(WORKOUTS_PATH)
+				.queryParam("authToken", authToken)
+				.queryParam("fields", fields)
+				.queryParam("maxResults", maxResults)
+				.queryParam("before", before.toString("yyyy-MM-dd HH:mm:ss Z"));
+
+		return get(workoutsTarget, WorkoutsResponse.class);
+	}
+	
 	public DetailedWorkout getWorkout(long workoutId) throws InvocationException {
 		checkLoggedIn();
 		WebTarget workoutsTarget = target().path(SINGLE_WORKOUT_PATH)
@@ -159,10 +192,10 @@ public class EndomondoSession {
 	 * @return
 	 * @throws InvocationException
 	 */
-	public List<Workout> getAllWorkouts()  throws InvocationException {
+	public List<Workout> getWorkoutsMultiThreaded()  throws InvocationException {
 		checkLoggedIn();
-		int workoutsPerTherad = 10;
-		return multiThreadedExecutor.getAllWorkouts(workoutsPerTherad);
+		int workoutsPerTherad = 20;
+		return multiThreadedExecutor.getWorkouts(workoutsPerTherad);
 	}
 
 
